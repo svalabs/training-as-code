@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+import os
+import re
+import subprocess
+import argparse
+import sys
+
+TEST_PATH = ''
+
+
+def get_labs():
+    labs = set()
+    lab_pattern = re.compile(r'lab-(\d+)-')
+    for f in get_test_files():
+        result = lab_pattern.search(f)
+
+        if not result:
+            continue
+
+        lab = int(result.group(1))
+        labs.add(lab)
+
+    if not labs:
+        print(f"No lab tests found")
+        exit(1)
+
+    return list(labs)
+
+
+def get_lab_test(lab):
+    tasks = []
+    for f in get_test_files():
+        if f.startswith(f'lab-{lab}'):
+            tasks.append(os.path.join(TEST_PATH, f))
+    return tasks
+
+
+def get_test_files():
+    try:
+        files = os.listdir(TEST_PATH)
+    except FileNotFoundError:
+        print("Test folder not found. Are you in the labs directory?")
+        exit(1)
+    else:
+        return files
+
+
+def run_single_check(lab):
+    tasks = get_lab_test(lab)
+
+    print(f"Checking lab {lab}\n")
+
+    if not tasks:
+        print(f"No tests defined for lab {lab}")
+        exit(1)
+
+    lab_task_pattern = re.compile(fr'lab-{lab}-task-(\d+)-(.+)\.(?:yaml|yml)')
+    success_counter = 0
+
+    for task in tasks:
+        task_match = lab_task_pattern.search(task)
+
+        if not task_match:
+            print(f"Invalid task test name {task}. Please contact your instructor.")
+            exit(1)
+
+        task_num = task_match.group(1)
+        task_name = task_match.group(2)
+
+        print(f"[{task_num}/{len(tasks)}] Checking {task_name}...", end=" ")
+
+        try:
+            output = subprocess.check_output(['commander', 'test', task])
+        except subprocess.CalledProcessError:
+            print("\033[1;31mFailure!\033[0m")
+            # TODO: Give some reasons here
+            # Question is question is how much of the commander output to use
+        else:
+            print("\033[1;32mSuccess! \033[0m")
+            success_counter += 1
+
+    if success_counter == len(tasks):
+        print("\033[1;32mAll tasks correct! \033[0m\n")
+    else:
+        print(
+            f"\n\033[1;31mErrors in {len(tasks) - success_counter} "
+            f"{'tasks' if len(tasks) - success_counter > 1 else 'task'}\033[0m\n")
+
+
+def run_full_check():
+    labs = get_labs()
+    for lab in labs:
+        run_single_check(lab)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='check lab solutions for correctness.')
+
+    parser.add_argument('check', nargs='?', default=None)
+    parser.add_argument('--workdir', required=False, default="/home/vagrant/labs")
+    parser.add_argument('--testpath', required=False, default="./tests")
+    args = parser.parse_args()
+
+    TEST_PATH = args.testpath
+    os.chdir(args.workdir)
+
+    if args.check:
+        run_single_check(args.check)
+    else:
+        run_full_check()

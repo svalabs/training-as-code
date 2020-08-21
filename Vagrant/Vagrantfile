@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.network "private_network", ip: "192.168.24.99"
+  config.vm.box = "centos/8"
+  # copy Lab tools
+  config.vm.provision "file", source: "../Ansible", destination: "/vagrant/ansible"
+  config.vm.provision "file", source: "../labs", destination: "/home/vagrant/labs"
+  config.vm.provision "file", source: "../tools/lab", destination: "/tmp/lab"
+  config.vm.provision "shell", privileged: true, inline: <<-SHELL
+    mv /tmp/lab /usr/local/bin/lab
+    curl -Lo /usr/local/bin/commander https://github.com/commander-cli/commander/releases/download/v2.2.0/commander-linux-amd64
+    yum install -y python3
+    chmod +x /usr/local/bin/commander /usr/local/bin/lab
+  SHELL
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "ansible/lab.yml"
+  end
+end

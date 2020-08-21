@@ -1,0 +1,57 @@
+stages:
+  - html
+  - pdf
+  - collect
+
+
+render html:
+  stage: html
+  image:
+    name: python
+  script:
+    - pip install jinja2
+    - python build.py
+  artifacts:
+    paths:
+      - presentation.html
+
+
+build presentation:
+  stage: pdf
+  image:
+    name: astefanutti/decktape
+    entrypoint: [""]
+  script:
+    - node /decktape/decktape.js --chrome-path chromium-browser --chrome-arg=--no-sandbox --chrome-arg=--disable-web-security remark presentation.html presentation.pdf
+  artifacts:
+    paths:
+      - presentation.pdf
+      - presentation.html
+
+
+build handout:
+  stage: pdf
+  dependencies: []
+  image:
+    name: pistatium/markdown-pdf
+  script:
+    - markdown-pdf -o handout.pdf handout.md
+  artifacts:
+    paths:
+      - handout.pdf
+
+
+collect files:
+  stage: collect
+  image: alpine
+  script:
+    - echo "Collecting files..."
+  artifacts:
+    paths:
+      - css/
+      - imgs/
+      - assets/
+      - remark-latest.min.js
+      - presentation.html
+      - presentation.pdf
+      - handout.pdf

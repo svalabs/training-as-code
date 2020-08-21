@@ -1,0 +1,4 @@
+tests:
+  succeeds:
+    command: exit 1
+    exit-code: 1

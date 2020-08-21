@@ -1,0 +1,38 @@
+---
+- name: Prepare lab environment
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Fix keyboard layout
+      command: "/bin/localectl set-keymap de-nodeadkeys"
+      changed_when: false
+
+    - name: Install core utilities
+      yum:
+        name: "{{ core_packages }}"
+        state: installed
+      ignore_errors: true
+      vars:
+        core_packages:
+        - dos2unix
+        - vim
+        - bind-utils
+        - epel-release
+        - python3-pytest
+
+    - name: Install Python modules
+      pip:
+        name:
+          - testinfra
+
+    - name: Disable firewall as we also like to live dangerously
+      service:
+        name: firewalld
+        state: stopped
+        enabled: false
+
+    - name: Disable SELinux as this is a lab environment
+      selinux:
+        policy: targeted
+        state: permissive

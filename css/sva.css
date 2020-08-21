@@ -1,0 +1,137 @@
+@font-face {
+	font-family: "Inter-Light";
+	src: url("Inter-Light.otf") format("opentype");
+}
+@font-face {
+	font-family: "Inter-Regular";
+	src: url("Inter-Regular.otf") format("opentype");
+}
+
+body {
+	font-family: "Inter-Light";
+	font-weight: 150;
+	font-style: normal;
+	color: black;
+	line-height: 25px;
+	vertical-align: super;
+	margin: 0px 0px 19px 0px;
+}
+
+strong {
+	font-family: "Inter-Regular";
+	}
+
+ul ol {
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 300;
+	text-transform: uppercase;
+	text-align: left;
+}
+
+ul li:before {
+  content: ">";
+  padding-right: 8px;
+}
+
+ul li {
+	background: 0 0 !important;
+	border: 0 !important;
+	display: block;
+	text-decoration: none;
+	list-style-type: none;
+}
+
+li {
+	padding-bottom: 15px;
+}
+
+h1, h2, h3 {
+	margin: 0 0 20px 0;
+	/*line-height: 1.0;*/
+	font-weight: 300;
+	font-style: normal;
+	text-transform: uppercase;
+}
+
+.remark-slide-content h1 {
+	color: #2a6ab2;
+	font-size: 60px;
+    font-weight: normal;
+}
+
+.remark-slide-content h2 {
+	color: #98aacd;
+	font-size: 50px;
+}
+
+.remark-slide-content h3 {
+	color: #bdc7dd;
+	font-size: 40px;
+}
+
+.remark-slide-content h1:before {
+	content: "//";
+	padding-right: 8px;
+}
+
+.remark-slide-content table {
+	width: 100%;
+}
+
+.remark-slide-content table td {
+	padding: 5px;
+}
+
+.remark-slide-content table th {
+	background-color:#98aacd;
+}
+
+.remark-slide-content table td {
+	background-color: #e7ecf3;
+}
+
+
+a {
+  color: #2a6ab2;
+}
+
+strong {
+  font-weight: bold;
+}
+
+.remark-slide-content {
+	font-size: 32px;
+	line-height: 1.2;
+}
+
+.remark-slide-number {
+	bottom: 12px;
+	opacity: 1;
+	position: absolute;
+	left: 20px;
+	right: auto;
+	font-size: 12px;
+	font-family: sans-serif;
+	color: #999;
+}
+
+.remark-slide-number img {
+	padding: 0 20px 0 0;
+}
+
+.hljs {
+	font-size: 24px;
+}
+.remark-code-line-highlighted { background-color: #e7ecf3; }
+
+.footnote {
+	position: absolute;
+	bottom: 3em;
+  }
+
+.red { color: #fa0000; }
+
+.small {
+	font-size: 24px;
+}

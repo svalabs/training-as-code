@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<link href="css/sva.css" rel="stylesheet" type="text/css" media="all">
+  </head>
+  <body>
+    <textarea id="source">
+
+{{ content }}
+
+    </textarea>
+
+    <script src="remark-latest.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      // macro for image scaling
+      // see also: https://github.com/gnab/remark/issues/72#issuecomment-419693263_
+      remark.macros.img = function (altText, width) {
+        var url = this;
+        return '<img alt="' + altText + '" src="' + url + '" style="width: ' + width + '" />';
+      };
+      // starting slideshow
+      var slideshow = remark.create({
+        // override factor from 4:3 to 16:9
+        ratio: '{{ ratio }}',
+        // override footer
+        {% if customer is defined and customer|length %}
+        slideNumberFormat: '<img src="imgs/sva.jpg"> %current% | %total% - KOPIE: {{ customer }}',
+        {% else %}
+        slideNumberFormat: '<img src="imgs/sva.jpg"> %current% | %total%',
+        {% endif %}
+        // enable line highlightning
+        highlightLines: true
+      });
+    </script>
+  </body>
+</html>
