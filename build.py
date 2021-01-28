@@ -11,14 +11,13 @@ import re
 from itertools import zip_longest
 from math import ceil
 
-from jinja2 import Template
-
 
 IGNORED_DOCS = [
     "CHANGELOG.md",
     "README.md",
     "README-remarkjs.md",
     "handout.md",
+    "labs.md"
 ]
 """
 IGNORED_DOCS: documents that will never be imported
@@ -40,12 +39,10 @@ def main():
     config = read_config('settings.ini')
     slides = render_slides(read_slides(), config)
 
-    template = read_template('template.html.j2')
-    rendered_template = template.render(
-        content=slides,
-        ratio=config["layout"]["ratio"],
-        **config["meta"],
-    )
+    template = read_template('template.html')
+
+    rendered_template = render_metadata(template, config)
+    rendered_template = rendered_template.replace('{{ content }}', slides)
 
     write_file("presentation.html", rendered_template)
 
@@ -58,7 +55,7 @@ def read_config(filename):
 
 def read_template(filename):
     with open(filename) as file_:
-        return Template(file_.read())
+        return file_.read()
 
 
 def read_slides():
@@ -85,9 +82,11 @@ def render_slides(slides, config):
     rendered_agenda = render_agenda(agenda)
 
     combined_slides = SLIDE_DIVIDER.join(slides)
-    slide_template = Template(combined_slides)
 
-    return slide_template.render(agenda=rendered_agenda, **config["meta"])
+    rendered_slides = render_metadata(combined_slides, config)
+    rendered_slides = rendered_slides.replace('{{ agenda }}', rendered_agenda)
+
+    return rendered_slides
 
 
 def create_agenda(slides):
@@ -141,6 +140,22 @@ def chunks(iterable, count):
     # chunks('ABCDEFG', 3) --> ABC DEF Gxx"
     args = [iter(iterable)] * count
     return zip_longest(*args)
+
+
+def render_metadata(slides, metadata):
+    rendered = slides.replace('{{ title }}', metadata['meta']['title'])
+    customer = metadata['meta'].get('customer', '')
+    rendered = rendered.replace('{{ customer }}', customer)
+    rendered = rendered.replace('{{ ratio }}', metadata['layout']['ratio'])
+
+    if customer:
+        slideFormat = f"%current% | %total% - KOPIE: {customer}"
+    else:
+        slideFormat = "%current% | %total%"
+
+    rendered = rendered.replace('{{ slideNumberFormat }}', slideFormat)
+
+    return rendered
 
 
 def write_file(filename, content):

@@ -26,11 +26,7 @@
         // override factor from 4:3 to 16:9
         ratio: '{{ ratio }}',
         // override footer
-        {% if customer is defined and customer|length %}
-        slideNumberFormat: '<img src="imgs/sva.jpg"> %current% | %total% - KOPIE: {{ customer }}',
-        {% else %}
-        slideNumberFormat: '<img src="imgs/sva.jpg"> %current% | %total%',
-        {% endif %}
+        slideNumberFormat: '<img src="imgs/sva.jpg"> {{ slideNumberFormat }}',
         // enable line highlightning
         highlightLines: true
       });
