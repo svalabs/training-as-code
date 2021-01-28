@@ -1,15 +1,26 @@
 stages:
+  - quality check
   - html
   - pdf
   - collect
 
 
+linting:
+  stage: quality check
+  image:
+    name: stdevel/simple-linter
+    entrypoint: [""]
+  script:
+    - /entrypoint.py . -E ./build.py
+  allow_failure: true
+
+
 render html:
   stage: html
+  needs: []
   image:
-    name: python
+    name: python:alpine
   script:
-    - pip install jinja2
     - python build.py
   artifacts:
     paths:
@@ -39,19 +50,61 @@ build handout:
   artifacts:
     paths:
       - handout.pdf
+  rules:
+    - exists:
+        - handout.md
 
 
-collect files:
+build lab guide:
+  stage: pdf
+  dependencies: []
+  image:
+    name: pistatium/markdown-pdf
+  script:
+    - markdown-pdf -o labs.pdf labs.md
+  artifacts:
+    paths:
+      - labs.pdf
+  rules:
+    - exists:
+        - labs.md
+
+
+
+
+.collect files template: &collect-files-template
   stage: collect
   image: alpine
   script:
     - echo "Collecting files..."
+
+
+collect files:
+  <<: *collect-files-template
   artifacts:
+    name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
     paths:
       - css/
       - imgs/
       - assets/
       - remark-latest.min.js
       - presentation.html
-      - presentation.pdf
-      - handout.pdf
+      - ./*.pdf
+  except:
+    - tags
+
+
+create release:
+  <<: *collect-files-template
+  artifacts:
+    expire_in: never
+    name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
+    paths:
+      - css/
+      - imgs/
+      - assets/
+      - remark-latest.min.js
+      - presentation.html
+      - ./*.pdf
+  only:
+    - tags
