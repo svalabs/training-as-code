@@ -12,6 +12,8 @@ This is a training template based on [remark.js (*v.0.15.0*)](https://github.com
 
 When used in GitLab all Markdown documents (``*.md``) will be automatically build into a HTML presentation and PDF document which can then be downloaded as job artifact. This allows distributing your slides easily.
 
+To manually create/update the HTML presentation, run the ``build.py`` utility. It requires Python 3.
+
 ### Handout
 
 A handout will be created from the file `handout.md`.
@@ -32,7 +34,25 @@ Check out the following websites for more information about Markdown:
 
 You can also check-out the [official remark.js website](https://remarkjs.com) for further examples.
 
-To manually create/update the HTML presentation, run the ``build.py`` utility. It requires having the Python module ``jinja2`` installed.
+### Presenter View
+
+The presenter should download the artifact from the _collect files_ pipeline job and extract these to wherever (s)he pleases.
+Then open `presentation.html` with your browser.
+
+Press `?` to see a list of all available commands.
+
+Pressing `p` will open a presenter view that shows the current slide, the next slide and speaker notes.
+
+### Multi-Screen Setup
+
+A common setup has one screen that presents to the audience and another that shows the information for the speaker.
+
+To achieve this press `c` in the presentation in order to clone it.
+The screens are linked and moving forward on the clone will move the other forward aswell.
+
+You can move the window to another screen and sent it into fullscreen in most browsers by `F11`?
+
+By then pressing `p` on the cloned presentation you will have your presenter view there.
 
 ## Markdown macros
 
